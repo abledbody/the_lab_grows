@@ -95,6 +95,6 @@
 		"inject-field",
 		"need-check-nil"
 	],
-	"Lua.runtime.version": "LuaJIT",
+	"Lua.runtime.version": "Lua 5.4",
 	"editor.rulers": [82],
 }
