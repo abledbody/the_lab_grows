@@ -1,4 +1,7 @@
---- @class Animation A table containing a timing array and an arbitrary number of other arrays from which to pull animation data. The indices of each array correspond to a particular frame.
+--- @class Animation A table containing a timing array and an arbitrary number of
+--- other arrays from which to pull animation data. The indices of each array
+--- correspond to a particular frame. If any data is at frame index -1, it will
+--- be used for every frame of the animation.
 --- @field duration [number] An array indicating how long it takes for each frame to elapse.
 
 --- Advances the time of the animator by dt.
