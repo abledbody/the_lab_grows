@@ -2,7 +2,7 @@
 --- other arrays from which to pull animation data. The indices of each array
 --- correspond to a particular frame. If any data is at frame index -1, it will
 --- be used for every frame of the animation.
---- @field duration [number] An array indicating how long it takes for each frame to elapse.
+--- @field duration [number] An array indicating how long it takes for each frame to elapse. Does not support index -1.
 
 --- Advances the time of the animator by dt.
 --- @param self Animator The animator.
