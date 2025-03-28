@@ -5,7 +5,7 @@ Animator = require"src/animation"
 
 -- Constants
 DT = 1/60
-local ANIM_IDLE <const> = Animator.by_rule(
+local ANIM_IDLE <const> = Animator.animation_by_rule(
 	12,
 	function(frame_i) return {
 			duration = 0.2,

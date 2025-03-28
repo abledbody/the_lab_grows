@@ -90,7 +90,7 @@ end
 --- @param length integer The number of frames to add to the animation.
 --- @param rule function A function which takes in a frame index and returns a table with all the keys and values for that frame. The `duration` key is always required.
 --- @return Animation animation An Animation generated via the provided rule.
-local function by_rule(length, rule)
+local function animation_by_rule(length, rule)
 	local animation = {}
 	for frame_i = 1, length do
 		for k,v in pairs(rule(frame_i)) do
@@ -104,5 +104,5 @@ end
 
 return {
 	new_animator = new_animator,
-	by_rule = by_rule,
+	animation_by_rule = animation_by_rule,
 }
