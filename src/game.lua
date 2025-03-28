@@ -1,3 +1,5 @@
+include"src/require.lua"
+
 -- Dependencies
 
 -- Constants
@@ -17,3 +19,5 @@ end
 function _draw()
 	
 end
+
+include"src/error_explorer.lua"
