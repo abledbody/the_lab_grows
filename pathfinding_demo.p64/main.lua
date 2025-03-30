@@ -87,6 +87,8 @@ function _draw()
 	local target_pos = path_follower.target:world_position(path)
 	line(target_pos.x-4,target_pos.y,target_pos.x+4,target_pos.y,62)
 	line(target_pos.x,target_pos.y-4,target_pos.x,target_pos.y+4,62)
+
+    print(string.format("cpu: %.2f",stat(1)*100),0,0,37)
 end
 
 include"src/error_explorer.lua"
