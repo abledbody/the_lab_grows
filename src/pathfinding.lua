@@ -1,6 +1,6 @@
 --- @alias Node userdata A 2-element f64 vector representing a 2D point in space.
 --- @alias Edge userdata A 2-element i32 vector holding the indices of the two nodes that the edge connects.
---- @alias Junction [integer] A table where each index corresponds to a node and each value is a list of indices corresponding to edges connected to that node.
+--- @alias Junction [integer] An array where each index corresponds to a node and each value is a list of indices corresponding to edges connected to that node.
 --- @alias Traversal [{increasing: boolean, edge_i: integer}] A sequence of edge indices and traversal directions that connect two PathPositions.
 
 --- Gets the worldspace coordinates of a PathPosition.
@@ -39,13 +39,13 @@ local function new_path_position(t,edge_i)
 	},m_path_position)
 end
 
---- Creates a cache of all the nodes that are connected to each node in the path.
+--- Creates a cache of all the edges that are connected to each node in the path.
 --- This is used to speed up the pathfinding process by avoiding the need to
 --- search through all the edges to find one that connects to a given node.
 --- If the path changes, the cache is invalid, and should be rebuilt.
 --- @param edges [Edge] The edges in the path
 --- @return [Junction] junctions The resulting list of junctions, one for each node, in corresponding order.
-local function cache_neighbors(edges)
+local function cache_junctions(edges)
 	local junctions = {}
 	for i,edge in ipairs(edges) do
 		local n1,n2 = edge[0],edge[1]
@@ -58,6 +58,7 @@ local function cache_neighbors(edges)
 end
 
 --- Creates a cache of the lengths of all the edges in the path.
+--- If the path changes, the cache is invalid, and should be rebuilt.
 --- @param nodes [Node] The nodes in the path.
 --- @param edges [Edge] The edges in the path.
 --- @return [number] lengths The resulting list of edge lengths, in corresponding order.
@@ -205,7 +206,7 @@ local function find_closest_path_position(self,pos)
 		local delta = n2-n1
 		local length = delta:magnitude()
 
-		-- No goto today. Too slow.
+		-- Nesting's a little faster than goto, and it's not too deep.
 		if length ~= 0 then
 			local dir = delta/length
 
@@ -246,7 +247,7 @@ local function new_path(nodes,edges)
 	return setmetatable({
 		nodes = nodes,
 		edges = edges,
-		junctions = cache_neighbors(edges),
+		junctions = cache_junctions(edges),
 		edge_lengths = cache_lengths(nodes,edges),
 	},m_path)
 end
