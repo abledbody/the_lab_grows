@@ -65,7 +65,19 @@ end
 local function cache_lengths(nodes,edges)
 	local lengths = {}
 	for i,edge in ipairs(edges) do
-		lengths[i] = (nodes[edge[1]]-nodes[edge[0]]):magnitude()
+		local n1,n2 = nodes[edge[0]],nodes[edge[1]]
+
+		if not (n1 and n2) then
+			local err = ""
+			if not n1 then err = "Low side of edge "..i.." refers to nonexistent node "..edge[0] end
+			if not n2 then
+				if err ~= "" then err = err.."\n" end
+				err = err.."High side of edge "..i.." refers to nonexistent node "..edge[1]
+			end
+			error(err)
+		end
+
+		lengths[i] = (n2-n1):magnitude()
 	end
 	return lengths
 end
