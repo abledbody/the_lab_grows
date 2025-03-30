@@ -282,8 +282,9 @@ local function move_along(self,distance)
 		if step >= #traversal then
 			-- Clamp the t value to never go beyond the target.
 			local target_extent = target.t*edge_len
-			extent = leg.increasing == (extent > target_extent)
-				and target_extent or extent
+			if leg.increasing == (extent > target_extent) then
+				extent = target_extent
+			end
 			break
 		end
 
