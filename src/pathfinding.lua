@@ -211,10 +211,9 @@ end
 --- @return PathPosition path_position The closest PathPosition to the given position. `nil` if the path is empty.
 local function find_closest_path_position(self,pos)
 	local nodes,edges = self.nodes,self.edges
-	if edges <= 0 then
-		error("Cannot find closest path position on an empty path")
-	end
 
+	-- We can be sure that if self is a valid path, edges is not empty, so this
+	-- will always result in a valid PathPosition, despite the nil initialization.
 	local closest_path_pos = nil --- @type PathPosition
 	local closest_dist = math.huge
 
@@ -261,6 +260,10 @@ m_path.__index = m_path
 --- @param edges [Edge] The edges in the path.
 --- @return Path path The new path.
 local function new_path(nodes,edges)
+	if #nodes <= 2 or #edges <= 1 then
+		error("At least 2 nodes and 1 edge are required to create a path.")
+	end
+
 	return setmetatable({
 		nodes = nodes,
 		edges = edges,
