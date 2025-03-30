@@ -208,10 +208,15 @@ end
 --- Finds the closest PathPosition to a given worldspace position.
 --- @param self Path The path to search.
 --- @param pos userdata The worldspace position to find the closest PathPosition to.
---- @return PathPosition? path_position The closest PathPosition to the given position. `nil` if the path is empty.
+--- @return PathPosition path_position The closest PathPosition to the given position. `nil` if the path is empty.
 local function find_closest_path_position(self,pos)
 	local nodes,edges = self.nodes,self.edges
-	local closest_path_pos,closest_dist = nil,math.huge
+	if edges <= 0 then
+		error("Cannot find closest path position on an empty path")
+	end
+
+	local closest_path_pos = nil --- @type PathPosition
+	local closest_dist = math.huge
 
 	for i,edge in ipairs(edges) do
 		local n1,n2 = nodes[edge[0]],nodes[edge[1]]
