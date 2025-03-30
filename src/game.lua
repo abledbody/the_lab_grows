@@ -2,7 +2,7 @@ include"src/require.lua"
 
 -- Dependencies
 Animator = require"src/animation"
-Paths = require"src/paths"
+Pathfinding = require"src/pathfinding"
 
 -- Constants
 DT = 1/60
@@ -40,8 +40,11 @@ local last_mouse_buttons --- @type integer
 -- Picotron hooks
 function _init()
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
-	path = Paths.new_path(PATH_DEF.nodes,PATH_DEF.edges)
-	path_follower = Paths.new_path_follower(path,Paths.new_path_position(0,1))
+	path = Pathfinding.new_path(PATH_DEF.nodes,PATH_DEF.edges)
+	path_follower = Pathfinding.new_path_follower(
+		path,
+		Pathfinding.new_path_position(0,1)
+	)
 	_,_,last_mouse_buttons = mouse()
 end
 
