@@ -208,10 +208,14 @@ end
 --- Finds the closest PathPosition to a given worldspace position.
 --- @param self Path The path to search.
 --- @param pos userdata The worldspace position to find the closest PathPosition to.
---- @return PathPosition? path_position The closest PathPosition to the given position. `nil` if the path is empty.
+--- @return PathPosition path_position The closest PathPosition to the given position. `nil` if the path is empty.
 local function find_closest_path_position(self,pos)
 	local nodes,edges = self.nodes,self.edges
-	local closest_path_pos,closest_dist = nil,math.huge
+
+	-- We can be sure that if self is a valid path, edges is not empty, so this
+	-- will always result in a valid PathPosition, despite the nil initialization.
+	local closest_path_pos = nil --- @type PathPosition
+	local closest_dist = math.huge
 
 	for i,edge in ipairs(edges) do
 		local n1,n2 = nodes[edge[0]],nodes[edge[1]]
@@ -256,6 +260,10 @@ m_path.__index = m_path
 --- @param edges [Edge] The edges in the path.
 --- @return Path path The new path.
 local function new_path(nodes,edges)
+	if #nodes <= 2 or #edges <= 1 then
+		error("At least 2 nodes and 1 edge are required to create a path.")
+	end
+
 	return setmetatable({
 		nodes = nodes,
 		edges = edges,
