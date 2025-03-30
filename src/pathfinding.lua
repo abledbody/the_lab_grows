@@ -24,7 +24,7 @@ local m_path_position = {
 	--- @param a PathPosition The first PathPosition.
 	--- @param b PathPosition The second PathPosition.
 	--- @return boolean #Whether the two PathPositions represent the same position on the path.
-	__equals = function(a,b) return a.t == b.t and a.edge_i == b.edge_i end,
+	__eq = function(a,b) return a.t == b.t and a.edge_i == b.edge_i end,
 }
 m_path_position.__index = m_path_position
 
