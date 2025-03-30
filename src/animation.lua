@@ -91,7 +91,7 @@ end
 
 --- Generates an animation by a rule function.
 --- @param length integer The number of frames to add to the animation.
---- @param rule function A function which takes in a frame index and returns a table with all the keys and values for that frame. The `duration` key is always required.
+--- @param rule fun(frame_i:integer):{duration:number} A function which takes in a frame index and returns a table with all the keys and values for that frame. The `duration` key is always required.
 --- @return Animation animation An Animation generated via the provided rule.
 local function animation_by_rule(length, rule)
 	local animation = {}
