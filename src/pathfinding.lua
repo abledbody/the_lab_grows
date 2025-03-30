@@ -14,7 +14,7 @@ local function path_to_world_position(self,path)
 	return (n2-n1)*self.t+n1
 end
 
---- @class PathPosition
+--- @class PathPosition Represents a position on a path via an edge index and a normalized interpolant.
 --- @field t number The normalized interpolant between the two nodes that the edge connects.
 --- @field edge_i integer The index of the edge in the path.
 local m_path_position = {
@@ -308,7 +308,7 @@ local function move_along(self,distance)
 		new_path_position(edge_len == 0 and 0 or extent/edge_len,leg.edge_i)
 end
 
---- @class PathFollower
+--- @class PathFollower Manages state for picking a path traversal and gradually following it over time.
 --- @field path Path The path that the PathFollower is following.
 --- @field path_position PathPosition The current position on the path.
 --- @field target PathPosition The target position on the path.
