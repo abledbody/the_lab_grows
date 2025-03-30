@@ -251,6 +251,9 @@ local function new_path(nodes,edges)
 	},m_path)
 end
 
+--- Recalculates the traversal to go from the current position to the target.
+--- @param self PathFollower The PathFollower to set the target for.
+--- @param target PathPosition The target position on the path.
 local function set_target(self,target)
 	self.target = target
 	self.traversal = self.path:traverse(self.path_position,target)
