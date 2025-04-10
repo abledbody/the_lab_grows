@@ -14,29 +14,28 @@ local function path_to_world_position(self,path)
 	return (n2-n1)*self.t+n1
 end
 
---- @class PathPosition Represents a position on a path via an edge index and a normalized interpolant.
---- @field t number The normalized interpolant between the two nodes that the edge connects.
---- @field edge_i integer The index of the edge in the path.
 local m_path_position = {
-	world_position = path_to_world_position,
-
 	--- Compares two PathPositions for equality.
 	--- @param a PathPosition The first PathPosition.
 	--- @param b PathPosition The second PathPosition.
 	--- @return boolean #Whether the two PathPositions represent the same position on the path.
 	__eq = function(a,b) return a.t == b.t and a.edge_i == b.edge_i end,
 }
-m_path_position.__index = m_path_position
 
 --- Creates a new PathPosition from the interpolant and edge index provided.
 --- @param t number The normalized interpolant between the two nodes that the edge connects.
 --- @param edge_i integer The index of the edge in the path.
 --- @return PathPosition path_position The new PathPosition.
 local function new_path_position(t,edge_i)
-	return setmetatable({
+	--- @class PathPosition Represents a position on a path via an edge index and a normalized interpolant.
+	--- @field t number The normalized interpolant between the two nodes that the edge connects.
+	--- @field edge_i integer The index of the edge in the path.
+	local pos = {
 		t = t,
 		edge_i = edge_i,
-	},m_path_position)
+		world_position = path_to_world_position,
+	}
+	return setmetatable(pos,m_path_position)
 end
 
 --- Creates a cache of all the edges that are connected to each node in the path.
@@ -244,16 +243,6 @@ local function find_closest_path_position(self,pos)
 	return closest_path_pos
 end
 
---- @class Path A distributed graph of nodes and edges in euclidean space.
---- @field nodes [Node] An array of 2D f64 vectors representing the nodes in the path.
---- @field edges [Edge] An array of 2D i32 vectors with the indices of the two nodes that the edge connects.
---- @field junctions [Junction] An array where each index corresponds to a node and each value is a list of indices corresponding to nodes that share an edge.
---- @field edge_lengths [number] An array where each index corresponds to an edge and each value is the length of the edge.
-local m_path = {
-	traverse = traverse,
-	find_closest_path_position = find_closest_path_position,
-}
-m_path.__index = m_path
 
 --- Creates a new path from the nodes and edges provided.
 --- @param nodes [Node] The nodes in the path.
@@ -264,12 +253,21 @@ local function new_path(nodes,edges)
 		error("At least 2 nodes and 1 edge are required to create a path.")
 	end
 
-	return setmetatable({
+	--- @class Path A distributed graph of nodes and edges in euclidean space.
+	--- @field nodes [Node] An array of 2D f64 vectors representing the nodes in the path.
+	--- @field edges [Edge] An array of 2D i32 vectors with the indices of the two nodes that the edge connects.
+	--- @field junctions [Junction] An array where each index corresponds to a node and each value is a list of indices corresponding to nodes that share an edge.
+	--- @field edge_lengths [number] An array where each index corresponds to an edge and each value is the length of the edge.
+	local path = {
 		nodes = nodes,
 		edges = edges,
 		junctions = cache_junctions(edges),
 		edge_lengths = cache_lengths(nodes,edges),
-	},m_path)
+
+		traverse = traverse,
+		find_closest_path_position = find_closest_path_position,
+	}
+	return path
 end
 
 --- Recalculates the traversal to go from the current position to the target.
@@ -333,29 +331,27 @@ local function move_along(self,distance)
 		new_path_position(edge_len == 0 and 0 or extent/edge_len,leg.edge_i)
 end
 
---- @class PathFollower Manages state for picking a path traversal and gradually following it over time.
---- @field path Path The path that the PathFollower is following.
---- @field path_position PathPosition The current position on the path.
---- @field target PathPosition The target position on the path.
---- @field traversal Traversal? The steps that need to be traversed to reach the target.
---- @field step integer The current step in the traversal.
-local m_path_follower = {
-	move_along = move_along,
-	set_target = set_target,
-}
-m_path_follower.__index = m_path_follower
-
 --- Creates a new PathFollower
 --- @param path Path The path that the PathFollower is following.
 --- @param path_position PathPosition The starting position on the path.
 --- @return PathFollower path_follower The new PathFollower.
-local function new_path_follower(path, path_position)
-	return setmetatable({
+local function new_path_follower(path,path_position)
+	--- @class PathFollower Manages state for picking a path traversal and gradually following it over time.
+	--- @field path Path The path that the PathFollower is following.
+	--- @field path_position PathPosition The current position on the path.
+	--- @field target PathPosition The target position on the path.
+	--- @field traversal Traversal? The steps that need to be traversed to reach the target.
+	--- @field step integer The current step in the traversal.
+	local path_follower = {
 		path_position = path_position,
 		path = path,
 		target = path_position,
 		step = 1,
-	},m_path_follower)
+		
+		move_along = move_along,
+		set_target = set_target,
+	}
+	return path_follower
 end
 
 return {
