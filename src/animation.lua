@@ -61,39 +61,41 @@ local function reset(self,frame)
 	self.ended = false
 end
 
---- @class Animator Responsible for handling animation playback state and frame data access.
---- @field anim Animation The current animation, which indicates the timing and indexing.
---- @field frame_i integer The index of the current frame.
---- @field frame_t number The time that has elapsed since entering the current frame in seconds.
---- @field frame_advances integer How many times the frame index has incremented during the last call to `advance`.
---- @field ended boolean Whether or not the last call to `advance` advanced past the end of the animation.
---- @field [any] any Any value which is present in the current animation and frame, with a key that doesn't match any of Animator's fields or methods.
 local m_animator = {
-	advance = advance,
-	reset = reset,
+	__index = function(self,key)
+		return key ~= "anim" and fetch(self,key)
+	end
 }
-m_animator.__index = function(self,key)
-	return m_animator[key] or (key ~= "anim" and fetch(self,key))
-end
 
 --- Creates a new animator.
 --- @param anim Animation? The animation to initialize this animator with.
 --- @return Animator animator The newly created animator.
 local function new_animator(anim)
-	return setmetatable({
+	--- @class Animator Responsible for handling animation playback state and frame data access.
+	--- @field anim Animation? The current animation, which indicates the timing and indexing.
+	--- @field frame_i integer The index of the current frame.
+	--- @field frame_t number The time that has elapsed since entering the current frame in seconds.
+	--- @field frame_advances integer How many times the frame index has incremented during the last call to `advance`.
+	--- @field ended boolean Whether or not the last call to `advance` advanced past the end of the animation.
+	--- @field [any] any Any value which is present in the current animation and frame, with a key that doesn't match any of Animator's fields or methods.
+	local animator = {
 		anim = anim,
 		frame_i = 1,
 		frame_t = 0,
 		frame_advances = 0,
 		ended = false,
-	},m_animator)
+
+		advance = advance,
+		reset = reset,
+	}
+	return setmetatable(animator,m_animator)
 end
 
 --- Generates an animation by a rule function.
 --- @param length integer The number of frames to add to the animation.
 --- @param rule fun(frame_i:integer):{duration:number} A function which takes in a frame index and returns a table with all the keys and values for that frame. The `duration` key is always required.
 --- @return Animation animation An Animation generated via the provided rule.
-local function animation_by_rule(length, rule)
+local function animation_by_rule(length,rule)
 	local animation = {}
 	for frame_i = 1, length do
 		for k,v in pairs(rule(frame_i)) do
