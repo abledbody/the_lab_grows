@@ -335,7 +335,7 @@ end
 --- @param path Path The path that the PathFollower is following.
 --- @param path_position PathPosition The starting position on the path.
 --- @return PathFollower path_follower The new PathFollower.
-local function new_path_follower(path, path_position)
+local function new_path_follower(path,path_position)
 	--- @class PathFollower Manages state for picking a path traversal and gradually following it over time.
 	--- @field path Path The path that the PathFollower is following.
 	--- @field path_position PathPosition The current position on the path.
