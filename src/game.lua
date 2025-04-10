@@ -5,13 +5,7 @@ Animator = require"src/animation"
 
 -- Constants
 DT = 1/60
-local ANIM_IDLE <const> = Animator.animation_by_rule(
-	12,
-	function(frame_i) return {
-			duration = 0.2,
-			sprite = frame_i-1,
-	} end
-)
+local ANIMATIONS <const> = fetch(DATP.."anm/0.anm")
 
 -- Game state
 local animator --- @class Animator
@@ -19,7 +13,7 @@ local animator --- @class Animator
 -- Picotron hooks
 function _init()
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
-	animator = Animator.new_animator(ANIM_IDLE)
+	animator = Animator.new_animator(ANIMATIONS.idle)
 end
 
 function _update()
