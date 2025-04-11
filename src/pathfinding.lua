@@ -249,7 +249,7 @@ end
 --- @param edges [Edge] The edges in the path.
 --- @return Path path The new path.
 local function new_path(nodes,edges)
-	if #nodes <= 2 or #edges <= 1 then
+	if #nodes < 2 or #edges < 1 then
 		error("At least 2 nodes and 1 edge are required to create a path.")
 	end
 
