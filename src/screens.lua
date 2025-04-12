@@ -1,8 +1,8 @@
---- @class Decoration
+--- @class Decoration A single sprite with a position on a screen.
 --- @field sprite number The sprite ID.
 --- @field pos userdata The position of the sprite.
 
---- @class ScreenData
+--- @class ScreenData The simplest immutable form of a screen which defines how it works.
 --- @field bg [Decoration] The background sprites.
 --- @field fg [Decoration] The foreground sprites.
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
@@ -30,7 +30,7 @@ end
 --- @param data ScreenData
 --- @return Screen
 local function new_screen(data)
-	--- @class Screen
+	--- @class Screen The active variant of a screen with methods.
 	--- @field data ScreenData The screen data.
 	--- @field path Path The precached pathfinding data.
 	local screen = {
@@ -42,10 +42,9 @@ local function new_screen(data)
 	return screen
 end
 
---- Generates cache values for pathfinding.
---- Note that this function mutates the input data.
---- @param screens_data table<string,ScreenData> The map data to generate cache for.
---- @return table<string,Screen> screens The map data with precached pathfinding data.
+--- Creates a table of screen objects from a table of screen data.
+--- @param screens_data table<string,ScreenData> The screen data to import.
+--- @return table<string,Screen> screens The screens created from the data.
 local function import(screens_data)
 	local screens = {}
 
