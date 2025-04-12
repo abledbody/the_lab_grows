@@ -2,7 +2,7 @@ include"src/require.lua"
 
 -- Dependencies
 local animation = require"src/animation"
-local screens = require"src/screens"
+local screens_module = require"src/screens"
 
 -- Constants
 DT = 1/60
@@ -12,11 +12,15 @@ local DRAW_CPU <const> = true
 -- Game state
 local animator --- @class Animator
 local screen_key --- @type string
+local screens --- @type table<string,Screen>
 
 -- Picotron hooks
 function _init()
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
+	
 	animator = animation.new_animator(ANIMATIONS.idle)
+
+	screens = screens_module.import(include"src/screen_data.lua")
 	screen_key = "start"
 end
 
@@ -27,7 +31,7 @@ end
 function _draw()
 	cls()
 
-	local screen = screens.screens[screen_key]
+	local screen = screens[screen_key]
 	screen:draw_bg()
 	spr(animator.sprite,52,139)
 	screen:draw_fg()
