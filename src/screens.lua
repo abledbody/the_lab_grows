@@ -8,7 +8,6 @@
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
 
 local pathfinding = require"src/pathfinding"
-local screen_data = require"src/screen_data"
 
 --- Draws everything in the background layer.
 --- @param self Screen The screen to draw.
@@ -56,5 +55,5 @@ local function import(screens_data)
 end
 
 return {
-	screens = import(screen_data)
+	import = import,
 }
