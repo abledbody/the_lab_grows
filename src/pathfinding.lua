@@ -283,12 +283,11 @@ end
 --- target position if the distance would go beyond it.
 --- @param self PathFollower The PathFollower to move along the path.
 --- @param distance number The distance to move along the path.
+--- @return boolean moved Whether the PathFollower has moved along the path.
 local function move_along(self,distance)
 	local traversal = self.traversal
 	local path_pos,target = self.path_position,self.target
-	if not traversal or distance <= 0 or path_pos == target then
-		return path_pos,self.step
-	end
+	if not traversal or distance <= 0 or path_pos == target then return false end
 	
 	local step,edge_lengths = self.step,self.path.edge_lengths
 
@@ -325,10 +324,41 @@ local function move_along(self,distance)
 		edge_len = edge_lengths[leg.edge_i]
 		extent = leg.increasing and overshoot or edge_len-overshoot
 	end
-	
+
 	self.step = step
 	self.path_position =
 		new_path_position(edge_len == 0 and 0 or extent/edge_len,leg.edge_i)
+	
+	return true
+end
+
+--- Gets the world position of the PathFollower from its path position.
+---@param self PathFollower The PathFollower to get the world position of.
+---@return userdata world_position The world position of the PathFollower.
+local function get_world_position(self)
+	return self.path_position:world_position(self.path)
+end
+
+--- Checks if the PathFollower has reached its target position.
+--- @param self PathFollower The PathFollower to check the target position of.
+--- @return boolean at_target Whether the PathFollower has reached its target position.
+local function get_at_target(self)
+	return self.path_position == self.target
+end
+
+--- Checks if the PathFollower is moving in the positive direction of each axis.
+--- @param self PathFollower The PathFollower to check the direction of.
+--- @return boolean positive_x Whether the PathFollower is moving in the positive direction of the x axis.
+--- @return boolean positive_y Whether the PathFollower is moving in the positive direction of the y axis.
+local function get_direction(self)
+	local traversal_step = self.traversal[self.step]
+	local nodes = self.path.nodes
+
+	local edge = self.path.edges[traversal_step.edge_i]
+	local delta = nodes[edge[1]]-nodes[edge[0]]
+
+	return delta.x < 0 == traversal_step.increasing,
+		delta.y < 0 == traversal_step.increasing
 end
 
 --- Creates a new PathFollower
@@ -350,6 +380,9 @@ local function new_path_follower(path,path_position)
 		
 		move_along = move_along,
 		set_target = set_target,
+		get_world_position = get_world_position,
+		get_at_target = get_at_target,
+		get_direction = get_direction,
 	}
 	return path_follower
 end
