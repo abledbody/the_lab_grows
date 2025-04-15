@@ -40,11 +40,11 @@ local function animate(self,dt)
 		and self.animations.idle
 		or self.animations.walk
 	
-	if self.animator.anim ~= next_anim then
+	if self.animator.anim == next_anim then
+		self.animator:advance(dt)
+	else
 		self.animator.anim = next_anim
 		self.animator:reset()
-	else
-		self.animator:advance(dt)
 	end
 end
 
