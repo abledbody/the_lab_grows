@@ -14,7 +14,7 @@ local function path_to_world_position(self,path)
 	return (n2-n1)*self.t+n1
 end
 
-local m_path_position = {
+local c_path_position = {
 	--- Compares two PathPositions for equality.
 	--- @param a PathPosition The first PathPosition.
 	--- @param b PathPosition The second PathPosition.
@@ -35,7 +35,7 @@ local function new_path_position(t,edge_i)
 		edge_i = edge_i,
 		world_position = path_to_world_position,
 	}
-	return setmetatable(pos,m_path_position)
+	return setmetatable(pos,c_path_position)
 end
 
 --- Creates a cache of all the edges that are connected to each node in the path.
