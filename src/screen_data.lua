@@ -21,6 +21,7 @@ return {
 			edges = {
 				userdata("i32",2,"0000000100000002"),
 			}
-		}
+		},
+		music = 0,
 	}
 }

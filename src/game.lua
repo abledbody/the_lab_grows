@@ -5,14 +5,14 @@ local m_screens = require"src/screens"
 local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
 local m_clicking = require"src/clicking"
+local m_screen_manager = require"src/screen_manager"
 
 -- Constants
 DT = 1/60
 local DRAW_CPU <const> = true
 
 -- Game state
-local screen_key --- @type string
-local screens --- @type table<string,Screen>
+local screen_manager --- @type ScreenManager
 local player --- @type Player
 local entities --- @type [Entity]
 
@@ -20,11 +20,10 @@ local entities --- @type [Entity]
 function _init()
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
 
-	screens = m_screens.import(include"src/screen_data.lua")
-	screen_key = "start"
+	screen_manager = m_screen_manager.init(include"src/screen_data.lua","start")
 
 	player = m_player.init(
-		screens[screen_key].path,m_pathfinding.new_path_position(0.5,1)
+		screen_manager.screen.path,m_pathfinding.new_path_position(0.5,1)
 	)
 	entities = {
 		player.entity,
@@ -35,7 +34,7 @@ function _update()
 	local mx,my,mb = mouse()
 	local mouse_pos = vec(mx,my)
 	m_clicking.frame_start(mb)
-	local screen = screens[screen_key]
+	local screen = screen_manager.screen
 
 	if m_clicking.down(0) then
 		player.entity.path_follower:set_target(
@@ -52,7 +51,7 @@ end
 function _draw()
 	cls()
 
-	local screen = screens[screen_key]
+	local screen = screen_manager.screen
 	screen:draw_bg()
 	for entity in all(entities) do
 		entity:draw()

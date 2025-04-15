@@ -6,6 +6,7 @@
 --- @field bg [Decoration] The background sprites.
 --- @field fg [Decoration] The foreground sprites.
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
+--- @field music integer? The music index to play while the screen is active.
 
 local m_pathfinding = require"src/pathfinding"
 
@@ -25,9 +26,15 @@ local function draw_fg(self)
 	end
 end
 
+--- Initializes the screen.
+--- @param self Screen
+local function init(self)
+	music(self.data.music or -1)
+end
+
 --- Creates a new screen object from some screen data.
---- @param data ScreenData
---- @return Screen
+--- @param data ScreenData The screen data to create the screen from.
+--- @return Screen screen The new screen object.
 local function new_screen(data)
 	--- @class Screen The active variant of a screen with methods.
 	--- @field data ScreenData The screen data.
@@ -35,6 +42,7 @@ local function new_screen(data)
 	local screen = {
 		data = data,
 		path = m_pathfinding.new_path(data.path.nodes, data.path.edges),
+		init = init,
 		draw_bg = draw_bg,
 		draw_fg = draw_fg,
 	}
