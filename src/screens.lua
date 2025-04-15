@@ -7,7 +7,7 @@
 --- @field fg [Decoration] The foreground sprites.
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
 
-local pathfinding = require"src/pathfinding"
+local m_pathfinding = require"src/pathfinding"
 
 --- Draws everything in the background layer.
 --- @param self Screen The screen to draw.
@@ -34,7 +34,7 @@ local function new_screen(data)
 	--- @field path Path The precached pathfinding data.
 	local screen = {
 		data = data,
-		path = pathfinding.new_path(data.path.nodes, data.path.edges),
+		path = m_pathfinding.new_path(data.path.nodes, data.path.edges),
 		draw_bg = draw_bg,
 		draw_fg = draw_fg,
 	}
