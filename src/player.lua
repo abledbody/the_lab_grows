@@ -2,6 +2,8 @@ local m_entities = require"src/entities"
 
 local PLAYER_ANIMATIONS <const> = fetch(DATP.."anm/grim.anm") --- @type table<string,Animation>
 
+--- The animation listener for the player.
+--- @param frame_events table<string,any> Every event that occured in the calling frame.
 local function animation_listener(_,frame_events)
 	if frame_events.step then
 		sfx(2)
