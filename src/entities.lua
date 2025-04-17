@@ -1,3 +1,5 @@
+--- @alias AnimationListener fun(self:Entity,frame_events:FrameEvents) A function that gets called when an animation event occurs.
+
 local m_pathfinding = require"src/pathfinding"
 local m_animation = require"src/animation"
 
@@ -46,6 +48,12 @@ local function animate(self,dt)
 		self.animator.anim = next_anim
 		self.animator:reset()
 	end
+
+	if self.animation_listener then
+		for frame_events in all(self.animator.events) do
+			self.animation_listener(self,frame_events)
+		end
+	end
 end
 
 --- Creates a new entity object.
@@ -53,19 +61,22 @@ end
 --- @param path_pos PathPosition The position on the path that the entity is spawned at.
 --- @param animations table<string,Animation> The animations for the entity.
 --- @param dist_per_walk_frame number How many pixels the entity moves per walk animation frame.
+--- @param animation_listener AnimationListener? The function to call when an animation event occurs.
 --- @return Entity entity The new entity object.
-local function new(path,path_pos,animations,dist_per_walk_frame)
+local function new(path,path_pos,animations,dist_per_walk_frame,animation_listener)
 	--- @class Entity Describes an animated object with pathfinding abilities.
 	--- @field path_follower PathFollower The entity's path follower.
 	--- @field animator Animator The entity's animator.
 	--- @field flipped boolean Whether the entity is facing to the left.
 	--- @field dist_per_walk_frame number How many pixels the entity moves per walk animation frame.
+	--- @field animation_listener AnimationListener? The function to call when an animation event occurs.
 	local entity = {
 		path_follower = m_pathfinding.new_path_follower(path,path_pos),
 		animations = animations,
 		animator = m_animation.new_animator(animations.idle),
 		flipped = false,
 		dist_per_walk_frame = dist_per_walk_frame,
+		animation_listener = animation_listener,
 		draw = draw,
 		walk = walk,
 		animate = animate,
