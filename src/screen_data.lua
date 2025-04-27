@@ -13,7 +13,6 @@ return {
 			sprite = 73,
 			pos = vec(30,61),
 		},
-		dynamic_objects = {},
 		path = {
 			nodes = {
 				vec(88,206),

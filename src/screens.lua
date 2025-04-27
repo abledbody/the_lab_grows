@@ -6,18 +6,19 @@
 --- @field bg Decoration The background sprite.
 --- @field fg Decoration The foreground sprite.
 --- @field lighting Decoration The lighting sprite.
---- @field dynamic_objects [Decoration] The decorations which change based on screen state.
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
 --- @field music integer? The music index to play while the screen is active.
 
 local m_pathfinding = require"src/pathfinding"
 
---- @param self Decoration
+--- Draws a decoration as a sprite.
+--- @param self Decoration The decoration to draw.
 local function spr_decoration(self)
 	spr(self.sprite,self.pos.x,self.pos.y)
 end
 
---- @param self Decoration
+--- Draws a decoration as a blit operation.
+--- @param self Decoration The decoration to blit.
 local function blit_decoration(self)
 	blit(get_spr(self.sprite),nil,nil,nil,self.pos.x,self.pos.y)
 end
