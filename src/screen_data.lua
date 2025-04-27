@@ -2,17 +2,18 @@
 return {
 	start = {
 		bg = {
-			{
-				sprite = 65,
-				pos = vec(30,61),
-			}
+			sprite = 65,
+			pos = vec(30,61),
 		},
 		fg = {
-			{
-				sprite = 66,
-				pos = vec(31,93),
-			}
+			sprite = 66,
+			pos = vec(31,93),
 		},
+		lighting = {
+			sprite = 73,
+			pos = vec(30,61),
+		},
+		dynamic_objects = {},
 		path = {
 			nodes = {
 				vec(88,206),

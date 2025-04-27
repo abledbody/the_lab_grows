@@ -6,6 +6,8 @@ local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
 local m_clicking = require"src/clicking"
 local m_screen_manager = require"src/screen_manager"
+local m_lighting = require"src/lighting"
+local m_entity_extensions = require"src/entity_extensions"
 
 -- Constants
 DT = 1/60
@@ -15,6 +17,7 @@ local DRAW_CPU <const> = true
 local screen_manager --- @type ScreenManager
 local player --- @type Player
 local entities --- @type [Entity]
+local lighting --- @type LightingConfig
 
 -- Picotron hooks
 function _init()
@@ -28,6 +31,13 @@ function _init()
 	entities = {
 		player.entity,
 	}
+
+	local default_coltab = userdata("u8",64,64)
+	default_coltab:peek(0x8000,0,64*64)
+	local identity_coltab = userdata("u8",64,64)
+	identity_coltab:peek(0x9000,0,64*64)
+
+	lighting = m_lighting.init(default_coltab,identity_coltab,get_spr(191))
 end
 
 function _update()
@@ -52,15 +62,19 @@ function _draw()
 	cls()
 
 	local screen = screen_manager.screen
-	screen:draw_bg()
+	m_screens.blit_decoration(screen.data.bg)
 	for entity in all(entities) do
-		entity:draw()
+		m_entity_extensions.draw_lit(lighting,entity,screen.data.lighting)
 	end
-	screen:draw_fg()
+	m_screens.spr_decoration(screen.data.fg)
 
 	if DRAW_CPU then
 		print(string.format("CPU: %.2f%%",stat(1)*100),0,0,37)
 	end
+
+	-- if key("z") then
+	-- 	get_display():bxor(get_display():band(0xC0):shr(2),true) -- Shows the high bits currently drawn to the screen
+	-- end
 end
 
 include"src/error_explorer.lua"

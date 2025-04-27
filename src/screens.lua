@@ -3,27 +3,23 @@
 --- @field pos userdata The position of the sprite.
 
 --- @class ScreenData The simplest immutable form of a screen which defines how it works.
---- @field bg [Decoration] The background sprites.
---- @field fg [Decoration] The foreground sprites.
+--- @field bg Decoration The background sprite.
+--- @field fg Decoration The foreground sprite.
+--- @field lighting Decoration The lighting sprite.
+--- @field dynamic_objects [Decoration] The decorations which change based on screen state.
 --- @field path {nodes:[Node], edges:[Edge]} The path data.
 --- @field music integer? The music index to play while the screen is active.
 
 local m_pathfinding = require"src/pathfinding"
 
---- Draws everything in the background layer.
---- @param self Screen The screen to draw.
-local function draw_bg(self)
-	for _,decoration in ipairs(self.data.bg) do
-		spr(decoration.sprite, decoration.pos.x, decoration.pos.y)
-	end
+--- @param self Decoration
+local function spr_decoration(self)
+	spr(self.sprite,self.pos.x,self.pos.y)
 end
 
---- Draws everything in the foreground layer.
---- @param self Screen The screen to draw.
-local function draw_fg(self)
-	for _,decoration in ipairs(self.data.fg) do
-		spr(decoration.sprite, decoration.pos.x, decoration.pos.y)
-	end
+--- @param self Decoration
+local function blit_decoration(self)
+	blit(get_spr(self.sprite),nil,nil,nil,self.pos.x,self.pos.y)
 end
 
 --- Initializes the screen.
@@ -43,8 +39,6 @@ local function new_screen(data)
 		data = data,
 		path = m_pathfinding.new_path(data.path.nodes, data.path.edges),
 		init = init,
-		draw_bg = draw_bg,
-		draw_fg = draw_fg,
 	}
 	return screen
 end
@@ -64,4 +58,6 @@ end
 
 return {
 	import = import,
+	spr_decoration = spr_decoration,
+	blit_decoration = blit_decoration,
 }
