@@ -1,7 +1,6 @@
 include"src/require.lua"
 
 -- Dependencies
-local m_decorations = require"src/screens"
 local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
 local m_clicking = require"src/clicking"
@@ -13,6 +12,7 @@ local m_decorations = require"src/decorations"
 -- Constants
 DT = 1/60
 local DRAW_CPU <const> = true
+local ILLUMINATION_CT_INDEX <const> = 191
 
 -- Game state
 local screen_manager --- @type ScreenManager
@@ -38,7 +38,11 @@ function _init()
 	local identity_coltab = userdata("u8",64,64)
 	identity_coltab:peek(0x9000,0,64*64)
 
-	lighting = m_lighting.init(default_coltab,identity_coltab,get_spr(191))
+	lighting = m_lighting.init(
+		default_coltab,
+		identity_coltab,
+		get_spr(ILLUMINATION_CT_INDEX)
+	)
 end
 
 function _update()
