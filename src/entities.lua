@@ -7,11 +7,7 @@ local m_animation = require"src/animation"
 --- @param self Entity The entity to draw.
 local function draw(self)
 	local sprite,pos,flipped = self:unpack_draw_data()
-	spr(
-		sprite,
-		pos.x,pos.y,
-		flipped
-	)
+	spr(sprite,pos.x,pos.y,flipped)
 end
 
 --- Gets the necessary data to draw the entity.
