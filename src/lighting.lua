@@ -15,8 +15,11 @@ local function draw_lit(self,draw_call,illuminance_map,pos,size)
 	self.identity_coltab:poke(0x8000) -- If first mask bit is not set, do nothing.
 	self.illuminance_coltab:poke(0x9000) -- If first mask bit is set, illuminate.
 	clip(pos.x,pos.y,size.x,size.y) -- Clip to the size of the sprite
+
 	m_decorations.spr(illuminance_map)
-	clip() -- Reset the clip
+
+	-- Reset the important stuff.
+	clip()
 	self.default_coltab:poke(0x8000)
 	poke(0x550A,0x3F)
 end
@@ -28,6 +31,9 @@ end
 --- @return LightingConfig lighting The new lighting configuration.
 local function init(default_coltab,identity_coltab,illuminance_coltab)
 	--- @class LightingConfig Holds on to relevant color tables for lighting effects.
+	--- @field default_coltab userdata The default color table.
+	--- @field identity_coltab userdata The identity color table. (All transparent)
+	--- @field illuminance_coltab userdata The illuminance color table.
 	local lighting = {
 		default_coltab = default_coltab,
 		identity_coltab = identity_coltab,
