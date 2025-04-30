@@ -1,13 +1,14 @@
 include"src/require.lua"
 
 -- Dependencies
-local m_screens = require"src/screens"
+local m_decorations = require"src/screens"
 local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
 local m_clicking = require"src/clicking"
 local m_screen_manager = require"src/screen_manager"
 local m_lighting = require"src/lighting"
 local m_entity_extensions = require"src/entity_extensions"
+local m_decorations = require"src/decorations"
 
 -- Constants
 DT = 1/60
@@ -62,11 +63,11 @@ function _draw()
 	cls()
 
 	local screen = screen_manager.screen
-	m_screens.blit_decoration(screen.data.bg)
+	m_decorations.blit(screen.data.bg)
 	for entity in all(entities) do
 		m_entity_extensions.draw_lit(lighting,entity,screen.data.lighting)
 	end
-	m_screens.spr_decoration(screen.data.fg)
+	m_decorations.spr(screen.data.fg)
 
 	if DRAW_CPU then
 		print(string.format("CPU: %.2f%%",stat(1)*100),0,0,37)

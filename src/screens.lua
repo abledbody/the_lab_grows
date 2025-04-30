@@ -1,7 +1,3 @@
---- @class Decoration A single sprite with a position on a screen.
---- @field sprite number The sprite ID.
---- @field pos userdata The position of the sprite.
-
 --- @class ScreenData The simplest immutable form of a screen which defines how it works.
 --- @field bg Decoration The background sprite.
 --- @field fg Decoration The foreground sprite.
@@ -10,18 +6,6 @@
 --- @field music integer? The music index to play while the screen is active.
 
 local m_pathfinding = require"src/pathfinding"
-
---- Draws a decoration as a sprite.
---- @param self Decoration The decoration to draw.
-local function spr_decoration(self)
-	spr(self.sprite,self.pos.x,self.pos.y)
-end
-
---- Draws a decoration as a blit operation.
---- @param self Decoration The decoration to blit.
-local function blit_decoration(self)
-	blit(get_spr(self.sprite),nil,nil,nil,self.pos.x,self.pos.y)
-end
 
 --- Initializes the screen.
 --- @param self Screen
@@ -59,6 +43,4 @@ end
 
 return {
 	import = import,
-	spr_decoration = spr_decoration,
-	blit_decoration = blit_decoration,
 }

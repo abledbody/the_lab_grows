@@ -1,3 +1,5 @@
+local m_decorations = require"src/decorations"
+
 --- Adds lighting to the provided draw call.
 --- @param self LightingConfig The lighting configuration to use.
 --- @param draw_call function The draw call to add lighting to.
@@ -12,15 +14,9 @@ local function draw_lit(self,draw_call,illuminance_map,pos,size)
 	poke(0x550A,0x7F) -- Read from the first mask bit
 	self.identity_coltab:poke(0x8000) -- If first mask bit is not set, do nothing.
 	self.illuminance_coltab:poke(0x9000) -- If first mask bit is set, illuminate.
-	sspr(
-		illuminance_map.sprite,
-		pos.x-illuminance_map.pos.x,
-		pos.y-illuminance_map.pos.y,
-		size.x,
-		size.y,
-		pos.x,
-		pos.y
-	)
+	clip(pos.x,pos.y,size.x,size.y) -- Clip to the size of the sprite
+	m_decorations.spr(illuminance_map)
+	clip() -- Reset the clip
 	self.default_coltab:poke(0x8000)
 	poke(0x550A,0x3F)
 end
