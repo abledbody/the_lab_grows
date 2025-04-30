@@ -6,11 +6,10 @@ local m_animation = require"src/animation"
 --- Draws an entity.
 --- @param self Entity The entity to draw.
 local function draw(self)
-	local sprite,size,pos,flipped = self:unpack_entity_draw()
-	sspr(
+	local sprite,pos,flipped = self:unpack_entity_draw()
+	spr(
 		sprite,
-		0,0,size.x,size.y,
-		pos.x,pos.y,nil,nil,
+		pos.x,pos.y,
 		flipped
 	)
 end
@@ -18,9 +17,9 @@ end
 --- Gets the necessary data to draw the entity.
 --- @param self Entity The entity to unpack.
 --- @return userdata sprite The sprite data.
---- @return userdata size The size of the sprite.
 --- @return userdata pos The position of the sprite.
 --- @return boolean flipped Whether the entity is flipped.
+--- @return userdata size The size of the sprite.
 local function unpack_entity_draw(self)
 	local sprite = get_spr(self.animator.sprite)
 	local size = vec(sprite:width(),sprite:height() or 1)
@@ -30,7 +29,7 @@ local function unpack_entity_draw(self)
 
 	local pos = self.path_follower:get_world_position()-pivot
 	
-	return sprite,size,pos,self.flipped
+	return sprite,pos,self.flipped,size
 end
 
 --- Moves the entity along the path in time with the walk animation.
