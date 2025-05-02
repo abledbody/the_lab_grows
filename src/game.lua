@@ -21,7 +21,7 @@ local player --- @type Player
 local entities --- @type [Entity]
 local lighting --- @type LightingConfig
 local mouse_pos --- @type userdata
-local cursor_data --- @type CursorData
+local cursor_data --- @type CursorHandler
 
 -- Picotron hooks
 function _init()
@@ -49,12 +49,12 @@ function _init()
 
 	window{cursor = 0}
 
-	cursor_data = m_cursor.init({
-		{sprite = 128, pivot = vec(0,0)},
-		{sprite = 129, pivot = vec(6,6)},
-		{sprite = 130, pivot = vec(4,3)},
-		{sprite = 131, pivot = vec(9,6)},
-	},1)
+	cursor_data = m_cursor.new({
+		go_to = {sprite = 128, pivot = vec(0,0)},
+		interactable = {sprite = 129, pivot = vec(6,6)},
+		interacting = {sprite = 130, pivot = vec(4,3)},
+		examine = {sprite = 131, pivot = vec(9,6)},
+	},"go_to")
 end
 
 function _update()
