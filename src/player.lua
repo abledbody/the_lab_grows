@@ -10,11 +10,11 @@ local function animation_listener(_,frame_events)
 	end
 end
 
---- Creates the player
+--- Creates a player entity.
 --- @param path Path The path that the player is spawned on.
 --- @param path_pos PathPosition The position on the path that the player is spawned at.
 --- @return Player player The new player object.
-local function init(path,path_pos)
+local function new(path,path_pos)
 	--- @class Player The player character.
 	--- @field entity Entity The entity of the player.
 	player = {
@@ -25,5 +25,5 @@ local function init(path,path_pos)
 end
 
 return {
-	init = init,
+	new = new,
 }
