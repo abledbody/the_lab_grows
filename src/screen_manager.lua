@@ -5,14 +5,14 @@ local m_screens = require"src/screens"
 --- @param screen Screen The screen to set as the current screen.
 local function set_screen(self,screen)
 	self.screen = screen
-	self.screen:init()
+	self.screen:enter()
 end
 
---- Initializes a new screen manager.
+--- Creates a new screen manager.
 --- @param screen_data table<string,ScreenData> The data for the screens available to the manager.
 --- @param initial_screen_key string The key of the initial screen to set.
 --- @return ScreenManager screen_manager The new screen manager.
-local function init(screen_data,initial_screen_key)
+local function new(screen_data,initial_screen_key)
 	local screens = m_screens.import(screen_data)
 	local initial_screen = screens[initial_screen_key]
 	assert(initial_screen,"Cannot initialize screen manager with invalid screen key: "..initial_screen_key)
@@ -32,5 +32,5 @@ local function init(screen_data,initial_screen_key)
 end
 
 return {
-	init = init,
+	new = new,
 }

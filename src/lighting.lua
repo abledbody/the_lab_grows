@@ -24,12 +24,12 @@ local function draw_lit(self,draw_call,illuminance_map,pos,size)
 	poke(0x550A,0x3F)
 end
 
---- Initializes the lighting configuration.
+--- Creates a lighting configuration.
 --- @param default_coltab userdata The default color table.
 --- @param identity_coltab userdata The identity color table. (All transparent)
 --- @param illuminance_coltab userdata The illuminance color table.
 --- @return LightingConfig lighting The new lighting configuration.
-local function init(default_coltab,identity_coltab,illuminance_coltab)
+local function new(default_coltab,identity_coltab,illuminance_coltab)
 	--- @class LightingConfig Holds on to relevant color tables for lighting effects.
 	--- @field default_coltab userdata The default color table.
 	--- @field identity_coltab userdata The identity color table. (All transparent)
@@ -44,5 +44,5 @@ local function init(default_coltab,identity_coltab,illuminance_coltab)
 end
 
 return {
-	init = init,
+	new = new,
 }
