@@ -8,6 +8,7 @@ local m_screen_manager = require"src/screen_manager"
 local m_lighting = require"src/lighting"
 local m_entity_extensions = require"src/entity_extensions"
 local m_decorations = require"src/decorations"
+local m_cursor = require"src/cursor"
 
 -- Constants
 DT = 1/60
@@ -19,6 +20,8 @@ local screen_manager --- @type ScreenManager
 local player --- @type Player
 local entities --- @type [Entity]
 local lighting --- @type LightingConfig
+local mouse_pos --- @type userdata
+local cursor_data --- @type CursorData
 
 -- Picotron hooks
 function _init()
@@ -43,11 +46,20 @@ function _init()
 		identity_coltab,
 		get_spr(ILLUMINATION_CT_INDEX)
 	)
+
+	window{cursor = 0}
+
+	cursor_data = m_cursor.init({
+		{sprite = 128, pivot = vec(0,0)},
+		{sprite = 129, pivot = vec(6,6)},
+		{sprite = 130, pivot = vec(4,3)},
+		{sprite = 131, pivot = vec(9,6)},
+	},1)
 end
 
 function _update()
 	local mx,my,mb = mouse()
-	local mouse_pos = vec(mx,my)
+	mouse_pos = vec(mx,my)
 	m_clicking.frame_start(mb)
 	local screen = screen_manager.screen
 
@@ -72,6 +84,8 @@ function _draw()
 		m_entity_extensions.draw_lit(lighting,entity,screen.data.lighting)
 	end
 	m_decorations.spr(screen.data.fg)
+
+	cursor_data:draw(mouse_pos)
 
 	if DRAW_CPU then
 		print(string.format("CPU: %.2f%%",stat(1)*100),0,0,37)
