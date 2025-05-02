@@ -24,9 +24,9 @@ local lighting --- @type LightingConfig
 function _init()
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
 
-	screen_manager = m_screen_manager.init(include"src/screen_data.lua","start")
+	screen_manager = m_screen_manager.new(include"src/screen_data.lua","start")
 
-	player = m_player.init(
+	player = m_player.new(
 		screen_manager.screen.path,m_pathfinding.new_path_position(0.5,1)
 	)
 	entities = {
@@ -38,7 +38,7 @@ function _init()
 	local identity_coltab = userdata("u8",64,64)
 	identity_coltab:peek(0x9000,0,64*64)
 
-	lighting = m_lighting.init(
+	lighting = m_lighting.new(
 		default_coltab,
 		identity_coltab,
 		get_spr(ILLUMINATION_CT_INDEX)

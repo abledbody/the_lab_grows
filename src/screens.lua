@@ -9,7 +9,7 @@ local m_pathfinding = require"src/pathfinding"
 
 --- Initializes the screen.
 --- @param self Screen
-local function init(self)
+local function enter(self)
 	music(self.data.music or -1)
 end
 
@@ -23,7 +23,7 @@ local function new_screen(data)
 	local screen = {
 		data = data,
 		path = m_pathfinding.new_path(data.path.nodes, data.path.edges),
-		init = init,
+		enter = enter,
 	}
 	return screen
 end
