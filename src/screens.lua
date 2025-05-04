@@ -4,10 +4,12 @@
 --- @field fg Decoration The foreground sprite.
 --- @field lighting Decoration The lighting sprite.
 --- @field regions [Region]
---- @field path {nodes:[Node], edges:[Edge]} The path data.
+--- @field path {nodes:[Node],edges:[Edge]} The path data.
 --- @field music integer? The music index to play while the screen is active.
 
---- @alias ScreenScript table A script that defines the behavior of a screen.
+--- @class ScreenScript A script that defines the behavior of a screen.
+--- @field regions table<string,RegionScript>? A table of region scripts, where the key is the name of the region and the value is a script that defines the behavior of that region.
+--- @field on_screen_event? fun(ctx:ScreenScriptContext) A function that handles events for the screen.
 
 --- @class Region A region of the screen that can be interacted with.
 --- @field pos userdata The position of the region.
@@ -21,7 +23,11 @@
 --- @class ScreenScriptContext The context of the screen script.
 --- @field screen Screen The screen that the script is running on.
 --- @field intent ScreenIntent The intent of the event.
---- @field event {name:string,[any]: any} The event that triggered the script.
+--- @field event ScreenEvent The event that triggered the script.
+
+--- @class ScreenEvent
+--- @field type string The type of event that occurred.
+--- @field [any] any
 
 --- @alias ScreenEventHandler fun(ctx:ScreenScriptContext) A function that handles events for a screen.
 
@@ -50,8 +56,7 @@ local function locate_region_on_screen(self,query_pt)
 end
 
 --- @class RegionScript A script defining the behavior of a region.
---- @field hover? fun(ctx:ScreenScriptContext) The function to call when the region is hovered over.
---- @field click? fun(ctx:ScreenScriptContext) The function to call when the region is clicked.
+--- @field [string] fun(ctx:ScreenScriptContext) An event handler for the region.
 
 --- Handles events regarding regions on the screen.
 --- @param ctx ScreenScriptContext The context of the screen script.
@@ -67,6 +72,7 @@ local function region_events(ctx)
 	end
 end
 
+--- Sends an event to the screen script.
 --- @param self Screen The screen that's being hovered over.
 --- @param ctx ScreenScriptContext Context for the screen script.
 local function event(self,ctx)
