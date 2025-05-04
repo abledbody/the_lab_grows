@@ -9,6 +9,7 @@ local m_lighting = require"src/lighting"
 local m_entity_extensions = require"src/entity_extensions"
 local m_decorations = require"src/decorations"
 local m_cursor = require"src/cursor"
+local m_screens = require"src/screens"
 
 -- Constants
 DT = 1/60
@@ -22,6 +23,7 @@ local entities --- @type [Entity]
 local lighting --- @type LightingConfig
 local mouse_pos --- @type userdata
 local cursor_data --- @type CursorHandler
+local screen_getters --- @type ScreenScriptGetters
 
 -- Picotron hooks
 function _init()
@@ -62,11 +64,42 @@ function _update()
 	mouse_pos = vec(mx,my)
 	m_clicking.frame_start(mb)
 	local screen = screen_manager.screen
+	
+	if screen.script then
+		local hovered_region = screen:locate_region_on_screen(mouse_pos)
+		local hovered_region_script = hovered_region
+			and screen.script.regions
+			and screen.script.regions[hovered_region.name]
 
-	if m_clicking.down(0) then
-		player.entity.path_follower:set_target(
-			screen.path:find_closest_path_position(mouse_pos)
-		)
+		--- @type ScreenScriptContext
+		local screen_ctx = {
+			event = {
+				type = "hover",
+				region = hovered_region,
+				region_script = hovered_region_script,
+				mouse_pos = mouse_pos,
+			},
+			screen = screen,
+			intent = {
+				cursor = "go_to",
+				consume_input = false,
+			},
+		}
+
+		screen:event(screen_ctx)
+
+		if m_clicking.down() then
+			screen_ctx.event.type = "click"
+			screen:event(screen_ctx)
+			if not screen_ctx.intent.consume_input then
+				player:go_to_mouse(screen,mouse_pos)
+			end
+		end
+
+		cursor_data:set(screen_ctx.intent.cursor)
+
+	elseif m_clicking.down() then
+		player:go_to_mouse(screen,mouse_pos)
 	end
 
 	for entity in all(entities) do

@@ -11,23 +11,26 @@ local function frame_start(new_mb)
 end
 
 --- Checks if a mouse button is currently pressed.
---- @param button integer The mouse button to check.
+--- @param button integer? The mouse button to check. Defaults to 0 (lmb)
 --- @return boolean is_pressed Whether the button is currently pressed.
 local function pressed(button)
+	button = button or 0
 	return mb&(1<<button) ~= 0
 end
 
 --- Checks if a mouse button was pressed this frame.
---- @param button integer The mouse button to check.
+--- @param button integer? The mouse button to check. Defaults to 0 (lmb)
 --- @return boolean was_pressed Whether the button was pressed this frame.
 local function down(button)
+	button = button or 0
 	return ~last_mb&mb&(1<<button) ~= 0
 end
 
 --- Checks if a mouse button was released this frame.
---- @param button integer The mouse button to check.
+--- @param button integer? The mouse button to check. Defaults to 0 (lmb)
 --- @return boolean was_released Whether the button was released this frame.
 local function up(button)
+	button = button or 0
 	return last_mb&~mb&(1<<button) ~= 0
 end
 
