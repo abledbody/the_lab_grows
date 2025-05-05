@@ -112,5 +112,6 @@ end
 
 return {
 	import = import,
+	locate_region = locate_region,
 	region_events = region_events,
 }
