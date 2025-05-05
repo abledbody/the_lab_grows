@@ -1,4 +1,5 @@
 local m_clicking = require("src/clicking")
+local m_events = require("src/events")
 
 --- Handles the mouse's interactions with the screen.
 --- @param screen Screen The screen that the mouse is interacting with.
@@ -12,32 +13,32 @@ local function update(screen,mouse_pos,cursor_data,player)
 			and screen.script.regions
 			and screen.script.regions[hovered_region.name]
 
-		--- @type ScreenScriptContext 
-		local screen_ctx = {
-			event = {
-				type = "hover",
+		--- @type Event
+		local event = m_events.new(
+			"hover",
+			{
+				screen = screen,
 				region = hovered_region,
 				region_script = hovered_region_script,
 				mouse_pos = mouse_pos,
 			},
-			screen = screen,
-			intent = {
+			{
 				cursor = "go_to",
 				consume_input = false,
-			},
-		}
+			}
+		)
 
-		screen:event(screen_ctx)
+		screen:send(event)
 
 		if m_clicking.down() then
-			screen_ctx.event.type = "click"
-			screen:event(screen_ctx)
-			if not screen_ctx.intent.consume_input then
+			event.type = "click"
+			screen:send(event)
+			if not event.output.consume_input then
 				player:go_to_mouse(screen,mouse_pos)
 			end
 		end
 
-		cursor_data:set(screen_ctx.intent.cursor)
+		cursor_data:set(event.output.cursor)
 
 	elseif m_clicking.down() then
 		player:go_to_mouse(screen,mouse_pos)
