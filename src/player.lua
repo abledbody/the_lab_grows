@@ -11,6 +11,7 @@ local function animation_listener(_,frame_events)
 	end
 end
 
+--- Starts moving the player's entity to the closest path position to the mouse.
 --- @param self Player The player object.
 --- @param screen Screen The screen that the player is on.
 --- @param mouse_pos userdata The position of the mouse.

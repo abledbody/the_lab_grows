@@ -18,6 +18,9 @@
 --- @field size userdata The size of the region.
 --- @field name string The name of the region.
 
+--- @class RegionScript A script defining the behavior of a region.
+--- @field [string] ScreenEventHandler An event handler for the region.
+
 local m_pathfinding = require"src/pathfinding"
 
 --- Finds the first region that contains the given point.
@@ -42,12 +45,9 @@ local function locate_region_on_screen(self,query_pt)
 	return locate_region(self.data.regions,query_pt)
 end
 
---- @class RegionScript A script defining the behavior of a region.
---- @field [string] fun(ctx:Event) An event handler for the region.
-
 --- Handles events regarding regions on the screen.
---- @param event Event The context of the screen script.
-local function region_events(event)
+--- @param event Event The event to handle.
+local function send_to_region(event)
 	local region_script = event.input.region_script
 	if not (region_script and region_script[event.type]) then return end
 
@@ -59,7 +59,7 @@ local function region_events(event)
 end
 
 --- Sends an event to the screen script.
---- @param self Screen The screen that's being hovered over.
+--- @param self Screen The screen to send the event to.
 --- @param event Event The event to send to the screen script.
 local function send(self,event)
 	if not self.script then return end
@@ -69,7 +69,7 @@ local function send(self,event)
 		return
 	end
 	
-	region_events(event)
+	send_to_region(event)
 end
 
 --- Initializes the screen.
@@ -89,7 +89,7 @@ local function new_screen(data)
 	local screen = {
 		data = data,
 		path = m_pathfinding.new_path(data.path.nodes, data.path.edges),
-		script = include(data.script),
+		script = data.script and include(data.script),
 		enter = enter,
 		locate_region_on_screen = locate_region_on_screen,
 		send = send,
@@ -113,5 +113,5 @@ end
 return {
 	import = import,
 	locate_region = locate_region,
-	region_events = region_events,
+	send_to_region = send_to_region,
 }
