@@ -1,4 +1,5 @@
 local m_entities = require"src/entities"
+local m_pathfinding = require"src/pathfinding"
 
 local PLAYER_ANIMATIONS <const> = fetch(DATP.."anm/grim.anm") --- @type table<string,Animation>
 
@@ -10,6 +11,16 @@ local function animation_listener(_,frame_events)
 	end
 end
 
+--- Starts moving the player's entity to the closest path position to the mouse.
+--- @param self Player The player object.
+--- @param screen Screen The screen that the player is on.
+--- @param mouse_pos userdata The position of the mouse.
+local function go_to_mouse(self,screen,mouse_pos)
+	self.entity.path_follower:set_target(
+		screen.path:find_closest_path_position(mouse_pos)
+	)
+end
+
 --- Creates a player entity.
 --- @param path Path The path that the player is spawned on.
 --- @param path_pos PathPosition The position on the path that the player is spawned at.
@@ -17,8 +28,9 @@ end
 local function new(path,path_pos)
 	--- @class Player The player character.
 	--- @field entity Entity The entity of the player.
-	player = {
+	local player = {
 		entity = m_entities.new(path,path_pos,PLAYER_ANIMATIONS,3,animation_listener),
+		go_to_mouse = go_to_mouse,
 	}
 
 	return player

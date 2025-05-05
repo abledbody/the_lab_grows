@@ -9,6 +9,7 @@ local m_lighting = require"src/lighting"
 local m_entity_extensions = require"src/entity_extensions"
 local m_decorations = require"src/decorations"
 local m_cursor = require"src/cursor"
+local m_mouse_handler = require"src/mouse_handler"
 
 -- Constants
 DT = 1/60
@@ -61,13 +62,10 @@ function _update()
 	local mx,my,mb = mouse()
 	mouse_pos = vec(mx,my)
 	m_clicking.frame_start(mb)
-	local screen = screen_manager.screen
-
-	if m_clicking.down(0) then
-		player.entity.path_follower:set_target(
-			screen.path:find_closest_path_position(mouse_pos)
-		)
-	end
+	
+	m_mouse_handler.update(
+		screen_manager.screen,mouse_pos,cursor_data,player
+	)
 
 	for entity in all(entities) do
 		entity:animate(DT)

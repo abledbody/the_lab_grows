@@ -13,7 +13,7 @@ end
 --- Sets the current cursor.
 --- @param self CursorHandler The cursor data.
 --- @param cursor_name string The name of the cursor to switch to.
-local function set_cursor(self,cursor_name)
+local function set(self,cursor_name)
 	if not self.catalog[cursor_name] then
 		error("Invalid cursor key: "..tostring(cursor_name))
 	end
@@ -32,9 +32,9 @@ local function new(catalog,initial_cursor)
 	local cursor_handler = {
 		catalog = catalog,
 		draw = draw,
-		set_cursor = set_cursor,
+		set = set,
 	}
-	cursor_handler:set_cursor(initial_cursor)
+	cursor_handler:set(initial_cursor)
 	return cursor_handler
 end
 
