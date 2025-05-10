@@ -12,15 +12,16 @@ local function draw_lit(self,draw_call,illuminance_map,pos,size)
 	poke(0x5509,0x3F)
 
 	poke(0x550A,0x7F) -- Read from the first mask bit
-	self.identity_coltab:poke(0x8000) -- If first mask bit is not set, do nothing.
-	self.illuminance_coltab:poke(0x9000) -- If first mask bit is set, illuminate.
+	memmap(self.identity_coltab,0x8000) -- If first mask bit is not set, do nothing.
+	memmap(self.illuminance_coltab,0x9000) -- If first mask bit is set, illuminate.
 	clip(pos.x,pos.y,size.x,size.y) -- Clip to the size of the sprite
 
 	m_decorations.spr(illuminance_map)
 
 	-- Reset the important stuff.
 	clip()
-	self.default_coltab:poke(0x8000)
+	unmap(self.identity_coltab)
+	unmap(self.illuminance_coltab)
 	poke(0x550A,0x3F)
 end
 
