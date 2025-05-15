@@ -10,88 +10,143 @@ local m_entity_extensions = require"src/entity_extensions"
 local m_decorations = require"src/decorations"
 local m_cursor = require"src/cursor"
 local m_mouse_handler = require"src/mouse_handler"
+local m_comments = require"src/comments"
 
 -- Constants
 DT = 1/60
-local DRAW_CPU <const> = true
+local DEBUG_MODE <const> = true
 local ILLUMINATION_CT_INDEX <const> = 191
 
 -- Game state
-local screen_manager --- @type ScreenManager
-local player --- @type Player
-local entities --- @type [Entity]
-local lighting --- @type LightingConfig
-local mouse_pos --- @type userdata
-local cursor_data --- @type CursorHandler
+local game --- @type GameState
+
+-- The game state is so self-explanatory that parameter/field comments have been
+-- elided.
+
+--- Initializes the root game state.
+--- @param screen_size userdata
+--- @param screen_manager ScreenManager
+--- @param player Player
+--- @param entities [Entity]
+--- @param lighting LightingConfig
+--- @param cursor_data CursorHandler
+--- @param comment_system CommentSystem
+--- @return GameState
+local function new_game(
+	screen_size,
+	screen_manager,
+	player,
+	entities,
+	lighting,
+	cursor_data,
+	comment_system
+)
+	--- @class GameState
+	--- @field screen_manager ScreenManager
+	--- @field player Player
+	--- @field entities [Entity]
+	--- @field lighting LightingConfig
+	--- @field mouse_pos userdata
+	--- @field cursor_data CursorHandler
+	--- @field comment_system CommentSystem
+	local game = {
+		screen_size = screen_size,
+		screen_manager = screen_manager,
+		player = player,
+		entities = entities,
+		lighting = lighting,
+		mouse_pos = vec(0,0),
+		cursor_data = cursor_data,
+		comment_system = comment_system,
+	}
+	return game
+end
 
 -- Picotron hooks
 function _init()
+	window{cursor = 0}
+
+	local screen_w,screen_h = get_display():attribs()
+
 	poke4(0x5000, fetch(DATP.."pal/0.pal"):get())
-
-	screen_manager = m_screen_manager.new(include"src/screen_data.lua","start")
-
-	player = m_player.new(
-		screen_manager.screen.path,m_pathfinding.new_path_position(0.5,1)
-	)
-	entities = {
-		player.entity,
-	}
 
 	local default_coltab = userdata("u8",64,64)
 	default_coltab:peek(0x8000,0,64*64)
 	local identity_coltab = userdata("u8",64,64)
 	identity_coltab:peek(0x9000,0,64*64)
 
-	lighting = m_lighting.new(
+	local screen_manager = m_screen_manager.new(include"src/screen_data.lua","start")
+
+	local player = m_player.new(
+		screen_manager.screen.path,
+		m_pathfinding.new_path_position(0.5,1)
+	)
+
+	local lighting = m_lighting.new(
 		default_coltab,
 		identity_coltab,
 		get_spr(ILLUMINATION_CT_INDEX)
 	)
 
-	window{cursor = 0}
-
-	cursor_data = m_cursor.new({
+	local cursor_data = m_cursor.new({
 		go_to = {sprite = 128, pivot = vec(0,0)},
 		interactable = {sprite = 129, pivot = vec(6,6)},
 		interacting = {sprite = 130, pivot = vec(4,3)},
 		examine = {sprite = 131, pivot = vec(9,6)},
 	},"go_to")
+
+	game = new_game(
+		vec(screen_w,screen_h),
+		screen_manager,
+		player,
+		{player.entity},
+		lighting,
+		cursor_data,
+		m_comments.new(0.05,2)
+	)
 end
 
 function _update()
 	local mx,my,mb = mouse()
-	mouse_pos = vec(mx,my)
+	game.mouse_pos = vec(mx,my)
 	m_clicking.frame_start(mb)
 	
-	m_mouse_handler.update(
-		screen_manager.screen,mouse_pos,cursor_data,player
-	)
+	m_mouse_handler.update(game)
 
-	for entity in all(entities) do
+	for entity in all(game.entities) do
 		entity:animate(DT)
 		entity:walk()
 	end
+
+	game.comment_system:advance_time(DT)
 end
 
 function _draw()
 	cls()
 
-	local screen = screen_manager.screen
+	local screen = game.screen_manager.screen
 	m_decorations.blit(screen.data.bg)
-	for entity in all(entities) do
-		m_entity_extensions.draw_lit(lighting,entity,screen.data.lighting)
+	for entity in all(game.entities) do
+		m_entity_extensions.draw_lit(game.lighting,entity,screen.data.lighting)
 	end
 	m_decorations.spr(screen.data.fg)
 
-	cursor_data:draw(mouse_pos)
+	game.comment_system:draw_comments(game.screen_size)
 
-	if DRAW_CPU then
-		print(string.format("CPU: %.2f%%",stat(1)*100),0,0,37)
+	game.cursor_data:draw(game.mouse_pos)
+
+	-- Debugging --
+	if not DEBUG_MODE then return end
+
+	print(string.format("CPU: %.2f%%",stat(1)*100),0,0,37)
+
+	if key("x") then
+		m_decorations.spr(screen.data.lighting)
 	end
-
-	-- if key("z") then
-	-- 	get_display():bxor(get_display():band(0xC0):shr(2),true) -- Shows the high bits currently drawn to the screen
-	-- end
+	
+	if key("z") then
+		get_display():bxor(get_display():band(0xC0):shr(2),true) -- Shows the high bits currently drawn to the screen
+	end
 end
 
 include"src/error_explorer.lua"
