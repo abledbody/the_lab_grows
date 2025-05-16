@@ -2,10 +2,15 @@
 -- is global. Just keep in mind that most feature functionality is not like this.
 local last_mb = 0 --- @type integer The last mouse button state.
 local mb = 0 --- @type integer The current mouse button state.
+local mouse_delta = vec(0,0) --- @type userdata The mouse delta from the last frame.
+local mouse_pos = vec(0,0) --- @type userdata The current mouse position.
 
---- Must be called at the start of each frame to update the mouse button state.
---- @param new_mb integer The new mouse button state.
-local function frame_start(new_mb)
+--- Must be called at the start of each frame to update the mouse state.
+local function frame_start()
+	local mx,my,new_mb = mouse()
+	local new_mouse_pos = vec(mx,my)
+	mouse_delta = new_mouse_pos-mouse_pos
+	mouse_pos = new_mouse_pos
 	last_mb = mb
 	mb = new_mb
 end
@@ -34,9 +39,19 @@ local function up(button)
 	return last_mb&~mb&(1<<button) ~= 0
 end
 
+local function position()
+	return mouse_pos
+end
+
+local function delta()
+	return mouse_delta
+end
+
 return {
 	frame_start = frame_start,
 	pressed = pressed,
 	down = down,
 	up = up,
+	position = position,
+	delta = delta,
 }

@@ -3,7 +3,7 @@ include"src/require.lua"
 -- Dependencies
 local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
-local m_clicking = require"src/clicking"
+local m_mouse = require"src/mouse"
 local m_screen_manager = require"src/screen_manager"
 local m_lighting = require"src/lighting"
 local m_entity_extensions = require"src/entity_extensions"
@@ -11,6 +11,7 @@ local m_decorations = require"src/decorations"
 local m_cursor = require"src/cursor"
 local m_mouse_handler = require"src/mouse_handler"
 local m_comments = require"src/comments"
+local m_rotary_inventory = require"src/rotary_inventory"
 
 -- Constants
 DT = 1/60
@@ -31,6 +32,7 @@ local game --- @type GameState
 --- @param lighting LightingConfig
 --- @param cursor_data CursorHandler
 --- @param comment_system CommentSystem
+--- @param rotary_inventory RotaryInventory
 --- @return GameState
 local function new_game(
 	screen_size,
@@ -39,7 +41,8 @@ local function new_game(
 	entities,
 	lighting,
 	cursor_data,
-	comment_system
+	comment_system,
+	rotary_inventory
 )
 	--- @class GameState
 	--- @field screen_manager ScreenManager
@@ -49,15 +52,16 @@ local function new_game(
 	--- @field mouse_pos userdata
 	--- @field cursor_data CursorHandler
 	--- @field comment_system CommentSystem
+	--- @field rotary_inventory RotaryInventory
 	local game = {
 		screen_size = screen_size,
 		screen_manager = screen_manager,
 		player = player,
 		entities = entities,
 		lighting = lighting,
-		mouse_pos = vec(0,0),
 		cursor_data = cursor_data,
 		comment_system = comment_system,
+		rotary_inventory = rotary_inventory,
 	}
 	return game
 end
@@ -102,14 +106,13 @@ function _init()
 		{player.entity},
 		lighting,
 		cursor_data,
-		m_comments.new(0.05,2)
+		m_comments.new(0.05,2),
+		m_rotary_inventory.new(vec(0,screen_h),100)
 	)
 end
 
 function _update()
-	local mx,my,mb = mouse()
-	game.mouse_pos = vec(mx,my)
-	m_clicking.frame_start(mb)
+	m_mouse.frame_start()
 	
 	m_mouse_handler.update(game)
 
@@ -118,6 +121,7 @@ function _update()
 		entity:walk()
 	end
 
+	game.rotary_inventory:update()
 	game.comment_system:advance_time(DT)
 end
 
@@ -132,8 +136,8 @@ function _draw()
 	m_decorations.spr(screen.data.fg)
 
 	game.comment_system:draw_comments(game.screen_size)
-
-	game.cursor_data:draw(game.mouse_pos)
+	game.rotary_inventory:draw()
+	game.cursor_data:draw(m_mouse.position())
 
 	-- Debugging --
 	if not DEBUG_MODE then return end

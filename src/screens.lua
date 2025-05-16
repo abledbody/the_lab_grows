@@ -53,7 +53,10 @@ local function send_to_region(event)
 
 	region_script[event.type](event)
 
-	if event.type == "click" then
+	if event.type == "click_down"
+		or event.type == "click_up"
+		or event.type == "click_held"
+	then
 		event.output.consume_input = true
 	end
 end
