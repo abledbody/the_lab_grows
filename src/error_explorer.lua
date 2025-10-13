@@ -1,3 +1,4 @@
+---@diagnostic disable
 -- # picotron error explorer
 --
 -- by kira
