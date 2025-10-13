@@ -1,6 +1,7 @@
 include"src/require.lua"
 
--- Dependencies
+--------------------------------------Dependencies-------------------------------------
+
 local m_player = require"src/player"
 local m_pathfinding = require"src/pathfinding"
 local m_clicking = require"src/clicking"
@@ -12,12 +13,13 @@ local m_cursor = require"src/cursor"
 local m_mouse_handler = require"src/mouse_handler"
 local m_comments = require"src/comments"
 
--- Constants
+---------------------------------------Constants---------------------------------------
 DT = 1/60
 local DEBUG_MODE <const> = true
 local ILLUMINATION_CT_INDEX <const> = 191
 
--- Game state
+---------------------------------------Game State--------------------------------------
+
 local game --- @type GameState
 
 -- The game state is so self-explanatory that parameter/field comments have been
@@ -62,7 +64,8 @@ local function new_game(
 	return game
 end
 
--- Picotron hooks
+-----------------------------------Picotron Callbacks----------------------------------
+
 function _init()
 	window{cursor = 0}
 

@@ -1,6 +1,6 @@
 {
 	"Lua.workspace.library": [
-		"C:\\lualib\\picotron"
+		"C:\\lualib\\picotron-definitions"
 	],
 	"Lua.runtime.nonstandardSymbol": [
 		"!=",
@@ -21,5 +21,5 @@
 		"need-check-nil"
 	],
 	"Lua.runtime.version": "Lua 5.4",
-	"editor.rulers": [82],
+	"editor.rulers": [87],
 }
